@@ -26,8 +26,8 @@ escapedChars = do char '\\'
                     'r'  -> '\r'
                     't'  -> '\t'
 
-parseCharacter :: Parser LispVal
-parseCharacter    
+--parseCharacter :: Parser LispVal
+--parseCharacter = do char "#\\"   
 
 parseString :: Parser LispVal
 parseString = do
@@ -67,6 +67,16 @@ parseNumberEx1'1 = do
 parseNumberEx1'2 :: Parser LispVal
 parseNumberEx1'2 = many1 digit >>= \n ->
                    return $ (Number . read) n
+
+-- parseNumber allow different bases
+parseNumberAnyBase :: Parser LispVal
+parseNumberAnyBase = do char "#"
+                        x <- oneOf "bodx"
+			return $ case x of
+                                   "b" -> "binary"
+                                   "o" -> "octal"
+                                   "x" -> "hexadecimal"
+                                   _   -> "decimal"
 
 parseExpr :: Parser LispVal
 parseExpr = parseAtom <|> parseString <|> parseNumberEx1'2
